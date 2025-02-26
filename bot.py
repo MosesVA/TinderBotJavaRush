@@ -138,7 +138,7 @@ dialog.mode = None
 dialog.list = []
 
 load_dotenv()
-telegram_token = os.getenv('TELEGRAM_TOKEN')
+telegram_token = os.getenv('TELEGRAM_BOT_TOKEN')
 gpt_token = os.getenv('GPT_TOKEN')
 
 chatgpt = ChatGptService(token=gpt_token)
