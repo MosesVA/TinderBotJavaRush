@@ -1,4 +1,7 @@
+import os
+
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, CallbackQueryHandler, CommandHandler
+from dotenv import load_dotenv
 
 from gpt import *
 from util import *
@@ -92,6 +95,17 @@ async def message_button(update, context):
     await my_message.edit_text(answer)
 
 
+async def profile(update, context):
+    dialog.mode = 'profile'
+    text = load_message('profile')
+    await send_photo(update, context, 'profile')
+    await send_text(update, context, text)
+
+
+async def profile_dialog(update, context):
+    pass
+
+
 async def hello(update, context):
     if dialog.mode == 'gpt':
         await gpt_dialog(update, context)
@@ -123,14 +137,18 @@ dialog = Dialog()
 dialog.mode = None
 dialog.list = []
 
-chatgpt = ChatGptService(
-    token='gpt:A02TVYVCwCQQ_OH2tdCyUd2HKqN4GP0xaMtAUWF72T9BdIro0-uIwKS8orBFCeYf_aOW-SBy7xJFkblB3Tz3TILu-3bNVFZqtDZtL5dguxjkKTQ1UO3rumIlFjgYt00HL4xUpvo1IqH_9HI69tGsbgnevKkS')
+load_dotenv()
+telegram_token = os.getenv('TELEGRAM_TOKEN')
+gpt_token = os.getenv('GPT_TOKEN')
 
-app = ApplicationBuilder().token("7675209029:AAH_zwrNV_GdRG1makmf5ilubMA5zP9bc_o").build()
+chatgpt = ChatGptService(token=gpt_token)
+
+app = ApplicationBuilder().token(telegram_token).build()
 app.add_handler(CommandHandler('start', start))
 app.add_handler(CommandHandler('gpt', gpt))
 app.add_handler(CommandHandler('date', date))
 app.add_handler(CommandHandler('message', message))
+app.add_handler(CommandHandler('profile', profile))
 
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, hello))
 
